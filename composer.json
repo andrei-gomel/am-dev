@@ -1,0 +1,16 @@
+{
+    "name": "oleh/am-dev",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Oleh\\AmDev\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrei Olekh",
+            "email": "andr_vol@mail.ru"
+        }
+    ],
+    "require": {}
+}
