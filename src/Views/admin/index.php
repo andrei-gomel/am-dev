@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- CSS only -->
 
@@ -74,14 +74,14 @@
 <?php
                     foreach ($tasks as $task)
                     {
-                        echo '<tr class="taskId" data-taskId="' . $task->id .'">
+                        echo '<tr id="taskId-' . $task->id .'" data-taskid="' . $task->id .'">
                       <th scope="row">' . $task->id . '</th>
                       <td>' . $task->user . '</td>
                       <td>' . $task->title . '</td>
                       <td>' . $task->description . '</td>
                       <td id="task-status">' . $task->status . '</td>
                       <td>' . $task->created_at . '</tad>
-                      <td class="task-updated">' . $task->updated_at . '</td>
+                      <td id="task-updated">' . $task->updated_at . '</td>
                       <td>
 
                 <button id="editTask" type="button" class="btn btn-primary btn-sm editTask" data-toggle="modal" data-bs-target="#editTaskModal" data-id="'. $task->id . '">Edit</button>
@@ -130,8 +130,8 @@
                                 </select>
                               </div>
                                 <div class="modal-footer">
-                                <button id="saveBtn" type="submit" class="btn btn-success">Сохранить</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button id="saveBtn" type="submit" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
+                                <button id="cancelBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                               </div>
                             </form>
                         </div>
@@ -142,12 +142,15 @@
               </div>
             </div>
 
-<script
-  src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js">
-
-  </script>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
   <script>    
+    function closeModal() {
+    modal.style.display = 'none';
+    // Опционально: сбросить форму, убрать фокус, отключить скролл
+    document.body.style.overflow = 'auto'; // восстановить скролл
+}
+
     // Когда нажимаешь редактировать запись
     $('.editTask').on('click', function () {
         const id = $(this).attr('data-id');
@@ -181,6 +184,9 @@
     // Сохранение записи
     $('#saveBtn').click(function(event) {
         event.preventDefault();
+        const modal = document.getElementById('modal');
+        const confirmBtn = document.getElementById('saveBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
         const task_id = $('#task_id').val();
         const status = $('#select-status').val();
             $.ajax({
@@ -194,16 +200,22 @@
                     {
                         alert('Ошибка!');
                     }
+                    
+                    confirmBtn.addEventListener('click', function (event) {
+                    event.preventDefault(); // ✅ Остановить поведение по умолчанию (если кнопка submit)
 
-                    $('#editTaskModal').hide();
-                    location.reload();
+                    closeModal();
+
+                    // const modalInstance = bootstrap.Modal.getInstance(modal);
+                    modalInstance.hide();
+                    });
+                    document.querySelector('tr[data-taskid="'+ response.id +'"] #task-status').textContent = response.status;
+                    document.querySelector('tr[data-taskid="'+ response.id +'"] #task-updated').textContent = response.updated_at;
                 }
             });
     });
 
-
 </script>
 
 </body>
-
 </html>
